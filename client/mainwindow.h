@@ -26,8 +26,8 @@ public:
 
 private slots:
     void onReadyRead();
-    void onTimer1();
-    void onTimer2();
+    void onTimerPing();
+    void onTimerRead();
 private:
     Ui::MainWindow *ui;
 };

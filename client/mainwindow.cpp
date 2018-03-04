@@ -22,12 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QTimer* timerPing = new QTimer(this);
     timerPing->setInterval(1000);
-    connect(timerPing,SIGNAL(timeout()),this,SLOT(onTimer1()));
+    connect(timerPing,SIGNAL(timeout()),this,SLOT(onTimerPing()));
     timerPing->start();
 
     QTimer* timerRead = new QTimer(this);
     timerRead->setInterval(3100);
-    connect(timerRead,SIGNAL(timeout()),this,SLOT(onTimer2()));
+    connect(timerRead,SIGNAL(timeout()),this,SLOT(onTimerRead()));
     timerRead->start();
 }
 
@@ -48,9 +48,9 @@ void MainWindow::onReadyRead() {
 
         ui->plainTextEdit->appendPlainText("< " + msg);
         if (msg == "pong") {
-            ui->plainTextEdit->appendPlainText(QString("ping response in %1ms").arg(mTimePing.restart()));
+            ui->plainTextEdit->appendPlainText(QString("ping response in %1ms").arg(mTimePing.elapsed()));
         } else if (msg == "one" || msg == "two" || msg == "three") {
-            ui->plainTextEdit->appendPlainText(QString("read response in %1ms").arg(mTimeRead.restart()));
+            ui->plainTextEdit->appendPlainText(QString("read response in %1ms").arg(mTimeRead.elapsed()));
             mRequested = false;
         } else {
             qDebug() << "unknown message" << msg;
@@ -59,13 +59,13 @@ void MainWindow::onReadyRead() {
 
 }
 
-void MainWindow::onTimer1() {
+void MainWindow::onTimerPing() {
     mSocket->write("ping\n");
     ui->plainTextEdit->appendPlainText("> ping");
     mTimePing.restart();
 }
 
-void MainWindow::onTimer2() {
+void MainWindow::onTimerRead() {
 
     if (mRequested)
         return;
