@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     Worker* mWorker = new Worker();
 
     connect(this,SIGNAL(request()),mWorker,SLOT(onRequest()));
-    connect(mWorker,SIGNAL(responce(QString)),this,SLOT(onResponce(QString)));
+    connect(mWorker,SIGNAL(response(QString)),this,SLOT(onResponse(QString)));
 
     QThread* thread = new QThread();
 
@@ -36,17 +36,17 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::onNewConnection() {
-    mClient = mServer->nextPendingConnection();
-    connect(mClient,SIGNAL(readyRead()),this,SLOT(onClientMessage()));
+    mSocket = mServer->nextPendingConnection();
+    connect(mSocket,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
 }
 
 
 
-void MainWindow::onClientMessage() {
+void MainWindow::onReadyRead() {
 
     QTextCodec* c = QTextCodec::codecForName("utf-8");
 
-    QStringList msgs = c->toUnicode(mClient->readAll()).split("\n");
+    QStringList msgs = c->toUnicode(mSocket->readAll()).split("\n");
     QString msg;
 
     foreach(msg,msgs) {
@@ -56,19 +56,21 @@ void MainWindow::onClientMessage() {
 
         ui->plainTextEdit->appendPlainText("< " + msg);
         if (msg == "ping") {
-            mClient->write("pong\n");
+            mSocket->write("pong\n");
             ui->plainTextEdit->appendPlainText("> pong");
         } else if (msg == "read") {
             emit request();
             mTime.restart();
+        } else {
+            qDebug() << "unknown message" << msg;
         }
     }
 }
 
-void MainWindow::onResponce(QString res) {
+void MainWindow::onResponse(QString res) {
     QTextCodec* c = QTextCodec::codecForName("utf-8");
-    mClient->write(c->fromUnicode(res));
-    mClient->write("\n");
+    mSocket->write(c->fromUnicode(res));
+    mSocket->write("\n");
     ui->plainTextEdit->appendPlainText("> " + res);
-    qDebug() << "responced in" << mTime.restart() << "ms";
+    qDebug() << "responsed in" << mTime.restart() << "ms";
 }

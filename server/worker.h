@@ -11,12 +11,12 @@ public:
     explicit Worker(QObject *parent = 0);
     
 protected:
-    QStringList mResponces;
+    QStringList mResponses;
     int mIndex;
 
 signals:
     
-    void responce(QString);
+    void response(QString);
 
 public slots:
 

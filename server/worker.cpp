@@ -8,7 +8,7 @@
 Worker::Worker(QObject *parent) :
     QObject(parent)
 {
-    mResponces << "one" << "two" << "three";
+    mResponses << "one" << "two" << "three";
     mIndex = 0;
 }
 
@@ -17,5 +17,5 @@ void Worker::onRequest()
     int ms = (rand() % 1000) + 1000;
     //qDebug() << ms;
     Thread::msleep(ms);
-    emit responce(mResponces[mIndex++ % mResponces.size()]);
+    emit response(mResponses[mIndex++ % mResponses.size()]);
 }

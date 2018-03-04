@@ -20,8 +20,8 @@ public:
 
     QTcpSocket* mSocket;
 
-    QTime mTime1;
-    QTime mTime2;
+    QTime mTimePing;
+    QTime mTimeRead;
     bool mRequested;
 
 private slots:

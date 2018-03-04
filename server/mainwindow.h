@@ -25,13 +25,13 @@ signals:
 
 public slots:
     void onNewConnection();
-    void onClientMessage();
-    void onResponce(QString res);
+    void onReadyRead();
+    void onResponse(QString res);
 
 private:
     Ui::MainWindow *ui;
     QTcpServer* mServer;
-    QTcpSocket* mClient;
+    QTcpSocket* mSocket;
     QTime mTime;
 };
 

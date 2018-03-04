@@ -20,15 +20,15 @@ MainWindow::MainWindow(QWidget *parent) :
     mSocket->connectToHost(QHostAddress("127.0.0.1"),3000);
     connect(mSocket,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
 
-    QTimer* timer1 = new QTimer(this);
-    timer1->setInterval(1000);
-    connect(timer1,SIGNAL(timeout()),this,SLOT(onTimer1()));
-    timer1->start();
+    QTimer* timerPing = new QTimer(this);
+    timerPing->setInterval(1000);
+    connect(timerPing,SIGNAL(timeout()),this,SLOT(onTimer1()));
+    timerPing->start();
 
-    QTimer* timer2 = new QTimer(this);
-    timer2->setInterval(5100);
-    connect(timer1,SIGNAL(timeout()),this,SLOT(onTimer2()));
-    timer2->start();
+    QTimer* timerRead = new QTimer(this);
+    timerRead->setInterval(3100);
+    connect(timerRead,SIGNAL(timeout()),this,SLOT(onTimer2()));
+    timerRead->start();
 }
 
 MainWindow::~MainWindow()
@@ -48,10 +48,12 @@ void MainWindow::onReadyRead() {
 
         ui->plainTextEdit->appendPlainText("< " + msg);
         if (msg == "pong") {
-            ui->plainTextEdit->appendPlainText(QString("ping responce in %1ms").arg(mTime1.restart()));
+            ui->plainTextEdit->appendPlainText(QString("ping response in %1ms").arg(mTimePing.restart()));
         } else if (msg == "one" || msg == "two" || msg == "three") {
-            ui->plainTextEdit->appendPlainText(QString("read responce in %1ms").arg(mTime2.restart()));
+            ui->plainTextEdit->appendPlainText(QString("read response in %1ms").arg(mTimeRead.restart()));
             mRequested = false;
+        } else {
+            qDebug() << "unknown message" << msg;
         }
     }
 
@@ -60,7 +62,7 @@ void MainWindow::onReadyRead() {
 void MainWindow::onTimer1() {
     mSocket->write("ping\n");
     ui->plainTextEdit->appendPlainText("> ping");
-    mTime1.restart();
+    mTimePing.restart();
 }
 
 void MainWindow::onTimer2() {
@@ -70,7 +72,7 @@ void MainWindow::onTimer2() {
 
     mSocket->write("read\n");
     ui->plainTextEdit->appendPlainText("> read");
-    mTime2.restart();
+    mTimeRead.restart();
 
     mRequested = true;
 }
